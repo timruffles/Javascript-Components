@@ -2,6 +2,8 @@ dojo.provide('ludofy.components.BigOl');
 dojo.require('dijit._Widget');
 dojo.require('dijit._Templated');
 dojo.require('dojo.data.ItemFileWriteStore');
+dojo.require('ludofy.components.ItemEditor');
+
 dojo.declare('ludofy.components.BigOl',[dijit._Widget,dijit._Templated],{
 
     templateString:'<div dojoAttachPoint="containerNode" class="${_class}"><ul class="items" dojoAttachPoint="items"></ul></div>',
@@ -9,58 +11,41 @@ dojo.declare('ludofy.components.BigOl',[dijit._Widget,dijit._Templated],{
     prefix:'#',
     suffix:'',
     _class:'ludofyComponentsBigOl',
-    _list:[],
     _liString:'<li class="ludofyBigOlItemsLi"><div class="cnt"><span class="number"></span><div class="content"></div></div></li>',
     store:false,
-    itemRenderer:false,
+    itemRenderer:'ludofy.components.ItemRenderer',
+    itemRendererParams:{},
     _setStoreAttr:function(store) {
         this.store = store;
+        dojo.connect(this.store,'onNew',this,this._renderItem);
+        dojo.connect(this.store,'onDelete',this,this._removeItem);
         this._render();
     },
     _render:function() {
         this.store.fetch({
-            onComplete:function(items){
-                dojo.forEach(items,this,function(item){
-
-                });
-            }
+            onItem:dojo.hitch(this,this._renderItem),
+            onError:dojo.hitch(this,function(error){
+                throw this._class + ' could not fetch from store because' + error;
+            })
         });
     },
-    push:function(domOrString) {
+    _renderItem:function(item) {
+        // instantiate itemRenderer, create container, and place, also setting identity attribute on container
+        // for easy deletion later
+        dojo.require('ludofy.components.ItemRenderer');
+        var itemRendererClass = dojo.getObject(this.itemRenderer);
+        var params = dojo.mixin({item:item},this.itemRendererParams);
+        var itemRenderer = new itemRendererClass(params,dojo.create('div'));
+        
         dojo.query(this.items).addContent(this._liString,'last');
-        //this.items.innerHTML += this._liString;
-        var contentWrap = dojo.query('li:last-child .content',this.items)[0];
-        if(dojo.isString(domOrString)) {
-            contentWrap.innerHTML += domOrString;
-        } else {
-            dojo.place(domOrString,contentWrap,'last');
-        }
-        this._list.push(domOrString);
+        dojo.query('li:last-child',this.items).attr('identity',this.store.getIdentity(item));
+        dojo.query('li:last-child .content',this.items).addContent(itemRenderer.containerNode,'last');
+
         this._renumber();
     },
-    pop:function(item) {
-        var first = dojo.query(this.items).pop();
-        dojo.destroy(first);
-        return this._list.pop();
-    },
-    shift:function() {
-         var last = dojo.query(this.items).shift();
-         dojo.destroy(last);
-         return this._list.shift();
-    },
-    get:function(index) {
-         return this._list[index];
-    },
-    slice:function(from,to) {
-        dojo.query('li',this.list).forEach(function(li,index){
-            if(index >= from && index <= to) {
-                dojo.destroy(li);
-            }
-        });
-        return this._list.slice(from,to);
-    },
-    indexOf:function(needle) {
-         return this._list.indexOf(needle);
+    _removeItem:function(item) {
+        dojo.query('[identity="' + this.store.getIdentity(item) + '"]',this.items).forEach('dojo.destroy(item)');
+        this._renumber();
     },
     _renumber:function() {
         var self= this;
@@ -68,7 +53,10 @@ dojo.declare('ludofy.components.BigOl',[dijit._Widget,dijit._Templated],{
             number.innerHTML = self.prefix + (index + 1).toString() + self.suffix;
         });
     },
-    getItems:function() {
-        return dojo.filter(this,'item instanceOf Number');
+    getRow:function(identityOrItem) {
+        if(!dojo.isString(identityOrItem))
+            identityOrItem = this.store.getIdentity(identityOrItem);
+        var qRes = dojo.query('[identity="' + identityOrItem + '"]',this.items);
+        return qRes.length ? qRes[0] :false;
     }
 });

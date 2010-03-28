@@ -20,10 +20,20 @@ dojo.declare('ludofy.components.BigOlAddDelete',[ludofy.components.BigOl],{
         // check if this is delete btn, if so, remove element
         var btnCandidate = event.target;
         if(dojo.hasClass(btnCandidate,'ludofyBigOlAddDeleteBtn')) {
-            var curIndx = dojo.query('li',this.items).indexOf(btnCandidate.parentNode);
-            this.slice(curIndx,curIndx);
-            this._renumber();
+            var item = this.store.fetchItemByIdentity({
+                identity:dojo.attr(btnCandidate.parentNode,'identity'),
+                onItem:dojo.hitch(this,function(item) {
+                    if(this.beforeOnDelete(item)) {
+                        this.store.deleteItem(item);
+                    }
+                })
+            });
         }
+    },
+    /**
+     * Pass in a function that checks an item pre-deletion, returning bool on whether it should be deleted
+     */
+    beforeOnDelete:function(item) {
+        return true;
     }
-
 });
