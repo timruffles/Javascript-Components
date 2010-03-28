@@ -13,4 +13,6 @@ dojo.addOnLoad(function(){
         actionList.push(firstAction.containerNode);
     });
 
+    // here we need to create a store etc
+
 });
