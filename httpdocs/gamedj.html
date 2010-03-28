@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <title>Your Title Here</title>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+  <link rel="stylesheet" href="css/screen.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="css/print.css" type="text/css" media="print" />
+  <!--[if IE]>
+    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen, projection" />
+  <![endif]-->
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, projection" />
+
+  <link rel="stylesheet" href="css/work.css" type="text/css" media="screen, projection" />
+  <script src="js/dojo/dojo.js"></script>
+  <script src="js/ludofy/pages/game.js"></script>
+
+</head>
+
+<body>
+<div class="container">
+	<div class="span-12 frm" >
+		<div class="frmTag top">
+			<div class="label">
+				<img alt="" src="images/icons/flight.png" style="padding-right: 10px;"/>
+			</div>
+			<div class="val">
+				<span style="font-size: 1.5em;">Create a game</span>
+			</div>
+		</div>
+		<!--
+		<div class="frmTag" style="background: #f7f7f7;">
+			<div class="label">
+				FROM
+			</div>
+			<div class="val">
+				<span>san francisco (sfo, oak)</span>
+				<input type="button" class="btnS" id="calcButton" name="change" value="change" style="margin-left: 150px;"/>
+			</div>
+		</div>
+                -->
+                <div class="frmTag">
+			<div class="fieldLbl">
+				Name of the game
+			</div>
+			<div class="val">
+                            <input type="text" class="txtLarge" name="to"/>
+			</div>
+			<div class="note">
+                            <span>What will players see when they look at your game?</span>
+			</div>
+		</div>
+		<div class="frmTag">
+			<div class="fieldLbl">
+				Actions in your game (good or bad):
+			</div>
+			<div class="val">
+                            <div id="actionList"></div>
+			</div>
+			<div class="note">
+                            <span>This contains the players' actions: can they hit balls, write words in their essay, make sales?</span>
+			</div>
+		</div>
+
+		<div class="frmTag">
+			<div class="fieldLbl">
+				Rewards and penalties for doing those things:
+			</div>
+			<div class="val">
+                            <ul class="bigList">
+                                <li>
+                                    <span class="num">#1</span>
+                                    <input type="text" class="txtLarge" name="when"/>
+                                    <select>
+                                        <option>Points</option>
+                                        <option>Badge</option>
+                                        <option>Plugin</option>
+                                    </select>
+                                    <img src="images/icons/plus.png" alt="" class="icon"/>
+                                </li>
+                            </ul>
+			</div>
+			<div class="note">
+				<span>
+				You can type anything here: a date, a timeframe, a day, etc</span>
+			</div>
+		</div>
+
+		<div class="frmTag" style="background: #f7f7f7; height: 50px;">
+			<div class="val next">
+                            <input type="button" class="btn" name="findFlights" value="Start playing" />
+			</div>
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>
+
