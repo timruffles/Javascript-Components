@@ -15,8 +15,11 @@ dojo.declare('ludofy.components.ItemEditor',[ludofy.components.ItemRenderer],{
         //console.log('wiring up');
         var binding = this.attr('binding');
         for (var attribute in binding) {
-            
             var attributeSetup = binding[attribute];
+            if(!attributeSetup.object || !attributeSetup.property) {
+                console.log('ludofy.components.ItemEditor passed invalid binding arg ' + attribute);
+                continue;
+            }
             var editor = this[attributeSetup.object];
             var editorWire = {object:editor,property:attributeSetup.property};
             var itemWire = new dojox.wire.DataWire({dataStore: this.attr('store'),
