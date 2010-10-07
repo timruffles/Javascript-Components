@@ -1,150 +1,189 @@
-/*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
-	Available via Academic Free License >= 2.1 OR the modified BSD license.
-	see: http://dojotoolkit.org/license for details
-*/
-
-
-if(!dojo._hasResource["dojox.charting.plot2d.Default"]){
-dojo._hasResource["dojox.charting.plot2d.Default"]=true;
 dojo.provide("dojox.charting.plot2d.Default");
+
 dojo.require("dojox.charting.plot2d.common");
 dojo.require("dojox.charting.plot2d.Base");
+
 dojo.require("dojox.lang.utils");
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.functional.reversed");
+
 (function(){
-var df=dojox.lang.functional,du=dojox.lang.utils,dc=dojox.charting.plot2d.common,_1=df.lambda("item.purgeGroup()");
-dojo.declare("dojox.charting.plot2d.Default",dojox.charting.plot2d.Base,{defaultParams:{hAxis:"x",vAxis:"y",lines:true,areas:false,markers:false,shadows:0,tension:0},optionalParams:{},constructor:function(_2,_3){
-this.opt=dojo.clone(this.defaultParams);
-du.updateWithObject(this.opt,_3);
-this.series=[];
-this.hAxis=this.opt.hAxis;
-this.vAxis=this.opt.vAxis;
-},calculateAxes:function(_4){
-this._calc(_4,dc.collectSimpleStats(this.series));
-return this;
-},render:function(_5,_6){
-this.dirty=this.isDirty();
-if(this.dirty){
-dojo.forEach(this.series,_1);
-this.cleanGroup();
-var s=this.group;
-df.forEachRev(this.series,function(_7){
-_7.cleanGroup(s);
-});
-}
-var t=this.chart.theme,_8,_9,_a,_b,_c=this.events();
-this.resetEvents();
-for(var i=this.series.length-1;i>=0;--i){
-var _d=this.series[i];
-if(!this.dirty&&!_d.dirty){
-continue;
-}
-_d.cleanGroup();
-if(!_d.data.length){
-_d.dirty=false;
-continue;
-}
-var s=_d.group,_e,ht=this._hScaler.scaler.getTransformerFromModel(this._hScaler),vt=this._vScaler.scaler.getTransformerFromModel(this._vScaler);
-if(typeof _d.data[0]=="number"){
-_e=dojo.map(_d.data,function(v,i){
-return {x:ht(i+1)+_6.l,y:_5.height-_6.b-vt(v)};
-},this);
-}else{
-_e=dojo.map(_d.data,function(v,i){
-return {x:ht(v.x)+_6.l,y:_5.height-_6.b-vt(v.y)};
-},this);
-}
-if(!_d.fill||!_d.stroke){
-_a=_d.dyn.color=new dojo.Color(t.next("color"));
-}
-var _f=this.opt.tension?dc.curve(_e,this.opt.tension):"";
-if(this.opt.areas){
-var _10=_d.fill?_d.fill:dc.augmentFill(t.series.fill,_a);
-var _11=dojo.clone(_e);
-if(this.opt.tension){
-var _12="L"+_11[_11.length-1].x+","+(_5.height-_6.b)+" L"+_11[0].x+","+(_5.height-_6.b)+" L"+_11[0].x+","+_11[0].y;
-_d.dyn.fill=s.createPath(_f+" "+_12).setFill(_10).getFill();
-}else{
-_11.push({x:_e[_e.length-1].x,y:_5.height-_6.b});
-_11.push({x:_e[0].x,y:_5.height-_6.b});
-_11.push(_e[0]);
-_d.dyn.fill=s.createPolyline(_11).setFill(_10).getFill();
-}
-}
-if(this.opt.lines||this.opt.markers){
-_8=_d.dyn.stroke=_d.stroke?dc.makeStroke(_d.stroke):dc.augmentStroke(t.series.stroke,_a);
-if(_d.outline||t.series.outline){
-_9=_d.dyn.outline=dc.makeStroke(_d.outline?_d.outline:t.series.outline);
-_9.width=2*_9.width+_8.width;
-}
-}
-if(this.opt.markers){
-_b=_d.dyn.marker=_d.marker?_d.marker:t.next("marker");
-}
-var _13=null,_14=null,_15=null;
-if(this.opt.shadows&&_8){
-var sh=this.opt.shadows,_16=new dojo.Color([0,0,0,0.3]),_17=dojo.map(_e,function(c){
-return {x:c.x+sh.dx,y:c.y+sh.dy};
-}),_18=dojo.clone(_9?_9:_8);
-_18.color=_16;
-_18.width+=sh.dw?sh.dw:0;
-if(this.opt.lines){
-if(this.opt.tension){
-_d.dyn.shadow=s.createPath(dc.curve(_17,this.opt.tension)).setStroke(_18).getStroke();
-}else{
-_d.dyn.shadow=s.createPolyline(_17).setStroke(_18).getStroke();
-}
-}
-if(this.opt.markers){
-_15=dojo.map(_17,function(c){
-return s.createPath("M"+c.x+" "+c.y+" "+_b).setStroke(_18).setFill(_16);
-},this);
-}
-}
-if(this.opt.lines){
-if(_9){
-if(this.opt.tension){
-_d.dyn.outline=s.createPath(_f).setStroke(_9).getStroke();
-}else{
-_d.dyn.outline=s.createPolyline(_e).setStroke(_9).getStroke();
-}
-}
-if(this.opt.tension){
-_d.dyn.stroke=s.createPath(_f).setStroke(_8).getStroke();
-}else{
-_d.dyn.stroke=s.createPolyline(_e).setStroke(_8).getStroke();
-}
-}
-if(this.opt.markers){
-_13=new Array(_e.length);
-_14=new Array(_e.length);
-dojo.forEach(_e,function(c,i){
-var _19="M"+c.x+" "+c.y+" "+_b;
-if(_9){
-_14[i]=s.createPath(_19).setStroke(_9);
-}
-_13[i]=s.createPath(_19).setStroke(_8).setFill(_8.color);
-},this);
-if(_c){
-dojo.forEach(_13,function(s,i){
-var o={element:"marker",index:i,run:_d,plot:this,hAxis:this.hAxis||null,vAxis:this.vAxis||null,shape:s,outline:_14[i]||null,shadow:_15&&_15[i]||null,cx:_e[i].x,cy:_e[i].y};
-if(typeof _d.data[0]=="number"){
-o.x=i+1;
-o.y=_d.data[i];
-}else{
-o.x=_d.data[i].x;
-o.y=_d.data[i].y;
-}
-this._connectEvents(s,o);
-},this);
-}
-}
-_d.dirty=false;
-}
-this.dirty=false;
-return this;
-}});
+	var df = dojox.lang.functional, du = dojox.lang.utils,
+		dc = dojox.charting.plot2d.common,
+		purgeGroup = df.lambda("item.purgeGroup()");
+
+	dojo.declare("dojox.charting.plot2d.Default", dojox.charting.plot2d.Base, {
+		defaultParams: {
+			hAxis: "x",		// use a horizontal axis named "x"
+			vAxis: "y",		// use a vertical axis named "y"
+			lines:   true,	// draw lines
+			areas:   false,	// draw areas
+			markers: false,	// draw markers
+			shadows: 0,		// draw shadows
+			tension: 0		// draw curved lines (tension>0)
+		},
+		optionalParams: {},	// no optional parameters
+		
+		constructor: function(chart, kwArgs){
+			this.opt = dojo.clone(this.defaultParams);
+			du.updateWithObject(this.opt, kwArgs);
+			this.series = [];
+			this.hAxis = this.opt.hAxis;
+			this.vAxis = this.opt.vAxis;
+		},
+		
+		calculateAxes: function(dim){
+			this._calc(dim, dc.collectSimpleStats(this.series));
+			return this;
+		},
+		render: function(dim, offsets){
+			this.dirty = this.isDirty();
+			if(this.dirty){
+				dojo.forEach(this.series, purgeGroup);
+				this.cleanGroup();
+				var s = this.group;
+				df.forEachRev(this.series, function(item){ item.cleanGroup(s); });
+			}
+			var t = this.chart.theme, stroke, outline, color, marker, events = this.events();
+			this.resetEvents();
+			for(var i = this.series.length - 1; i >= 0; --i){
+				var run = this.series[i];
+				if(!this.dirty && !run.dirty){ continue; }
+				run.cleanGroup();
+				if(!run.data.length){
+					run.dirty = false;
+					continue;
+				}
+
+				var s = run.group, lpoly, 
+					ht = this._hScaler.scaler.getTransformerFromModel(this._hScaler),
+					vt = this._vScaler.scaler.getTransformerFromModel(this._vScaler);
+				if(typeof run.data[0] == "number"){
+					lpoly = dojo.map(run.data, function(v, i){
+						return {
+							x: ht(i + 1) + offsets.l,
+							y: dim.height - offsets.b - vt(v)
+						};
+					}, this);
+				}else{
+					lpoly = dojo.map(run.data, function(v, i){
+						return {
+							x: ht(v.x) + offsets.l,
+							y: dim.height - offsets.b - vt(v.y)
+						};
+					}, this);
+				}
+				if(!run.fill || !run.stroke){
+					// need autogenerated color
+					color = run.dyn.color = new dojo.Color(t.next("color"));
+				}
+
+				var lpath = this.opt.tension ? dc.curve(lpoly, this.opt.tension) : "";
+
+				if(this.opt.areas){
+					var fill = run.fill ? run.fill : dc.augmentFill(t.series.fill, color);
+					var apoly = dojo.clone(lpoly);
+					if(this.opt.tension){
+						var apath = "L" + apoly[apoly.length-1].x + "," + (dim.height - offsets.b) +
+							" L" + apoly[0].x + "," + (dim.height - offsets.b) +
+							" L" + apoly[0].x + "," + apoly[0].y;
+						run.dyn.fill = s.createPath(lpath + " " + apath).setFill(fill).getFill();
+					} else {
+						apoly.push({x: lpoly[lpoly.length - 1].x, y: dim.height - offsets.b});
+						apoly.push({x: lpoly[0].x, y: dim.height - offsets.b});
+						apoly.push(lpoly[0]);
+						run.dyn.fill = s.createPolyline(apoly).setFill(fill).getFill();
+					}
+				}
+				if(this.opt.lines || this.opt.markers){
+					// need a stroke
+					stroke = run.dyn.stroke = run.stroke ? dc.makeStroke(run.stroke) : dc.augmentStroke(t.series.stroke, color);
+					if(run.outline || t.series.outline){
+						outline = run.dyn.outline = dc.makeStroke(run.outline ? run.outline : t.series.outline);
+						outline.width = 2 * outline.width + stroke.width;
+					}
+				}
+				if(this.opt.markers){
+					// need a marker
+					marker = run.dyn.marker = run.marker ? run.marker : t.next("marker");
+				}
+				var frontMarkers = null, outlineMarkers = null, shadowMarkers = null;
+				if(this.opt.shadows && stroke){
+					var sh = this.opt.shadows, shadowColor = new dojo.Color([0, 0, 0, 0.3]),
+						spoly = dojo.map(lpoly, function(c){
+							return {x: c.x + sh.dx, y: c.y + sh.dy};
+						}),
+						shadowStroke = dojo.clone(outline ? outline : stroke);
+					shadowStroke.color = shadowColor;
+					shadowStroke.width += sh.dw ? sh.dw : 0;
+					if(this.opt.lines){
+						if(this.opt.tension){
+							run.dyn.shadow = s.createPath(dc.curve(spoly, this.opt.tension)).setStroke(shadowStroke).getStroke();
+						} else {
+							run.dyn.shadow = s.createPolyline(spoly).setStroke(shadowStroke).getStroke();
+						}
+					}
+					if(this.opt.markers){
+						shadowMarkers = dojo.map(spoly, function(c){
+							return s.createPath("M" + c.x + " " + c.y + " " + marker).
+								setStroke(shadowStroke).setFill(shadowColor);
+						}, this);
+					}
+				}
+				if(this.opt.lines){
+					if(outline){
+						if(this.opt.tension){
+							run.dyn.outline = s.createPath(lpath).setStroke(outline).getStroke();
+						} else {
+							run.dyn.outline = s.createPolyline(lpoly).setStroke(outline).getStroke();
+						}
+					}
+					if(this.opt.tension){
+						run.dyn.stroke = s.createPath(lpath).setStroke(stroke).getStroke();
+					} else {
+						run.dyn.stroke = s.createPolyline(lpoly).setStroke(stroke).getStroke();
+					}
+				}
+				if(this.opt.markers){
+					frontMarkers = new Array(lpoly.length);
+					outlineMarkers = new Array(lpoly.length);
+					dojo.forEach(lpoly, function(c, i){
+						var path = "M" + c.x + " " + c.y + " " + marker;
+						if(outline){
+							outlineMarkers[i] = s.createPath(path).setStroke(outline);
+						}
+						frontMarkers[i] = s.createPath(path).setStroke(stroke).setFill(stroke.color);
+					}, this);
+					if(events){
+						dojo.forEach(frontMarkers, function(s, i){
+							var o = {
+								element: "marker",
+								index:   i,
+								run:     run,
+								plot:    this,
+								hAxis:   this.hAxis || null,
+								vAxis:   this.vAxis || null,
+								shape:   s,
+								outline: outlineMarkers[i] || null,
+								shadow:  shadowMarkers && shadowMarkers[i] || null,
+								cx:      lpoly[i].x,
+								cy:      lpoly[i].y
+							};
+							if(typeof run.data[0] == "number"){
+								o.x = i + 1;
+								o.y = run.data[i];
+							}else{
+								o.x = run.data[i].x;
+								o.y = run.data[i].y;
+							}
+							this._connectEvents(s, o);
+						}, this);
+					}
+				}
+				run.dirty = false;
+			}
+			this.dirty = false;
+			return this;
+		}
+	});
 })();
-}

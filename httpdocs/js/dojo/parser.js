@@ -1,222 +1,321 @@
-/*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
-	Available via Academic Free License >= 2.1 OR the modified BSD license.
-	see: http://dojotoolkit.org/license for details
-*/
-
-
-if(!dojo._hasResource["dojo.parser"]){
-dojo._hasResource["dojo.parser"]=true;
 dojo.provide("dojo.parser");
 dojo.require("dojo.date.stamp");
-dojo.parser=new function(){
-var d=dojo;
-this._attrName=d._scopeName+"Type";
-this._query="["+this._attrName+"]";
-function _1(_2){
-if(d.isString(_2)){
-return "string";
-}
-if(typeof _2=="number"){
-return "number";
-}
-if(typeof _2=="boolean"){
-return "boolean";
-}
-if(d.isFunction(_2)){
-return "function";
-}
-if(d.isArray(_2)){
-return "array";
-}
-if(_2 instanceof Date){
-return "date";
-}
-if(_2 instanceof d._Url){
-return "url";
-}
-return "object";
-};
-function _3(_4,_5){
-switch(_5){
-case "string":
-return _4;
-case "number":
-return _4.length?Number(_4):NaN;
-case "boolean":
-return typeof _4=="boolean"?_4:!(_4.toLowerCase()=="false");
-case "function":
-if(d.isFunction(_4)){
-_4=_4.toString();
-_4=d.trim(_4.substring(_4.indexOf("{")+1,_4.length-1));
-}
-try{
-if(_4.search(/[^\w\.]+/i)!=-1){
-return new Function(_4);
-}else{
-return d.getObject(_4,false);
-}
-}
-catch(e){
-return new Function();
-}
-case "array":
-return _4?_4.split(/\s*,\s*/):[];
-case "date":
-switch(_4){
-case "":
-return new Date("");
-case "now":
-return new Date();
-default:
-return d.date.stamp.fromISOString(_4);
-}
-case "url":
-return d.baseUrl+_4;
-default:
-return d.fromJson(_4);
-}
-};
-var _6={};
-dojo.connect(dojo,"extend",function(){
-_6={};
-});
-function _7(_8){
-if(!_6[_8]){
-var _9=d.getObject(_8);
-if(!d.isFunction(_9)){
-throw new Error("Could not load class '"+_8+"'. Did you spell the name correctly and use a full path, like 'dijit.form.Button'?");
-}
-var _a=_9.prototype;
-var _b={},_c={};
-for(var _d in _a){
-if(_d.charAt(0)=="_"){
-continue;
-}
-if(_d in _c){
-continue;
-}
-var _e=_a[_d];
-_b[_d]=_1(_e);
-}
-_6[_8]={cls:_9,params:_b};
-}
-return _6[_8];
-};
-this._functionFromScript=function(_f){
-var _10="";
-var _11="";
-var _12=_f.getAttribute("args");
-if(_12){
-d.forEach(_12.split(/\s*,\s*/),function(_13,idx){
-_10+="var "+_13+" = arguments["+idx+"]; ";
-});
-}
-var _14=_f.getAttribute("with");
-if(_14&&_14.length){
-d.forEach(_14.split(/\s*,\s*/),function(_15){
-_10+="with("+_15+"){";
-_11+="}";
-});
-}
-return new Function(_10+_f.innerHTML+_11);
-};
-this.instantiate=function(_16,_17,_18){
-var _19=[],dp=dojo.parser;
-_17=_17||{};
-_18=_18||{};
-d.forEach(_16,function(_1a){
-if(!_1a){
-return;
-}
-var _1b=dp._attrName in _17?_17[dp._attrName]:_1a.getAttribute(dp._attrName);
-if(!_1b||!_1b.length){
-return;
-}
-var _1c=_7(_1b),_1d=_1c.cls,ps=_1d._noScript||_1d.prototype._noScript;
-var _1e={},_1f=_1a.attributes;
-for(var _20 in _1c.params){
-var _21=_20 in _17?{value:_17[_20],specified:true}:_1f.getNamedItem(_20);
-if(!_21||(!_21.specified&&(!dojo.isIE||_20.toLowerCase()!="value"))){
-continue;
-}
-var _22=_21.value;
-switch(_20){
-case "class":
-_22="className" in _17?_17.className:_1a.className;
-break;
-case "style":
-_22="style" in _17?_17.style:(_1a.style&&_1a.style.cssText);
-}
-var _23=_1c.params[_20];
-if(typeof _22=="string"){
-_1e[_20]=_3(_22,_23);
-}else{
-_1e[_20]=_22;
-}
-}
-if(!ps){
-var _24=[],_25=[];
-d.query("> script[type^='dojo/']",_1a).orphan().forEach(function(_26){
-var _27=_26.getAttribute("event"),_1b=_26.getAttribute("type"),nf=d.parser._functionFromScript(_26);
-if(_27){
-if(_1b=="dojo/connect"){
-_24.push({event:_27,func:nf});
-}else{
-_1e[_27]=nf;
-}
-}else{
-_25.push(nf);
-}
-});
-}
-var _28=_1d.markupFactory||_1d.prototype&&_1d.prototype.markupFactory;
-var _29=_28?_28(_1e,_1a,_1d):new _1d(_1e,_1a);
-_19.push(_29);
-var _2a=_1a.getAttribute("jsId");
-if(_2a){
-d.setObject(_2a,_29);
-}
-if(!ps){
-d.forEach(_24,function(_2b){
-d.connect(_29,_2b.event,null,_2b.func);
-});
-d.forEach(_25,function(_2c){
-_2c.call(_29);
-});
-}
-});
-if(!_17._started){
-d.forEach(_19,function(_2d){
-if(!_18.noStart&&_2d&&_2d.startup&&!_2d._started&&(!_2d.getParent||!_2d.getParent())){
-_2d.startup();
-}
-});
-}
-return _19;
-};
-this.parse=function(_2e,_2f){
-var _30;
-if(!_2f&&_2e&&_2e.rootNode){
-_2f=_2e;
-_30=_2f.rootNode;
-}else{
-_30=_2e;
-}
-var _31=d.query(this._query,_30);
-return this.instantiate(_31,null,_2f);
-};
+
+dojo.parser = new function(){
+	// summary: The Dom/Widget parsing package
+
+	var d = dojo;
+	this._attrName = d._scopeName + "Type";
+	this._query = "[" + this._attrName + "]";
+
+	function val2type(/*Object*/ value){
+		// summary:
+		//		Returns name of type of given value.
+
+		if(d.isString(value)){ return "string"; }
+		if(typeof value == "number"){ return "number"; }
+		if(typeof value == "boolean"){ return "boolean"; }
+		if(d.isFunction(value)){ return "function"; }
+		if(d.isArray(value)){ return "array"; } // typeof [] == "object"
+		if(value instanceof Date) { return "date"; } // assume timestamp
+		if(value instanceof d._Url){ return "url"; }
+		return "object";
+	}
+
+	function str2obj(/*String*/ value, /*String*/ type){
+		// summary:
+		//		Convert given string value to given type
+		switch(type){
+			case "string":
+				return value;
+			case "number":
+				return value.length ? Number(value) : NaN;
+			case "boolean":
+				// for checked/disabled value might be "" or "checked".  interpret as true.
+				return typeof value == "boolean" ? value : !(value.toLowerCase()=="false");
+			case "function":
+				if(d.isFunction(value)){
+					// IE gives us a function, even when we say something like onClick="foo"
+					// (in which case it gives us an invalid function "function(){ foo }"). 
+					//  Therefore, convert to string
+					value=value.toString();
+					value=d.trim(value.substring(value.indexOf('{')+1, value.length-1));
+				}
+				try{
+					if(value.search(/[^\w\.]+/i) != -1){
+						// The user has specified some text for a function like "return x+5"
+						return new Function(value);
+					}else{
+						// The user has specified the name of a function like "myOnClick"
+						return d.getObject(value, false);
+					}
+				}catch(e){ return new Function(); }
+			case "array":
+				return value ? value.split(/\s*,\s*/) : [];
+			case "date":
+				switch(value){
+					case "": return new Date("");	// the NaN of dates
+					case "now": return new Date();	// current date
+					default: return d.date.stamp.fromISOString(value);
+				}
+			case "url":
+				return d.baseUrl + value;
+			default:
+				return d.fromJson(value);
+		}
+	}
+
+	var instanceClasses = {
+		// map from fully qualified name (like "dijit.Button") to structure like
+		// { cls: dijit.Button, params: {label: "string", disabled: "boolean"} }
+	};
+
+	// Widgets like BorderContainer add properties to _Widget via dojo.extend().
+	// If BorderContainer is loaded after _Widget's parameter list has been cached,
+	// we need to refresh that parameter list (for _Widget and all widgets that extend _Widget).
+	dojo.connect(dojo, "extend", function(){
+		instanceClasses = {};
+	});
+
+	function getClassInfo(/*String*/ className){
+		// className:
+		//		fully qualified name (like "dijit.form.Button")
+		// returns:
+		//		structure like
+		//			{ 
+		//				cls: dijit.Button, 
+		//				params: { label: "string", disabled: "boolean"}
+		//			}
+
+		if(!instanceClasses[className]){
+			// get pointer to widget class
+			var cls = d.getObject(className);
+			if(!d.isFunction(cls)){
+				throw new Error("Could not load class '" + className +
+					"'. Did you spell the name correctly and use a full path, like 'dijit.form.Button'?");
+			}
+			var proto = cls.prototype;
+	
+			// get table of parameter names & types
+			var params = {}, dummyClass = {};
+			for(var name in proto){
+				if(name.charAt(0)=="_"){ continue; } 	// skip internal properties
+				if(name in dummyClass){ continue; }		// skip "constructor" and "toString"
+				var defVal = proto[name];
+				params[name]=val2type(defVal);
+			}
+
+			instanceClasses[className] = { cls: cls, params: params };
+		}
+		return instanceClasses[className];
+	}
+
+	this._functionFromScript = function(script){
+		var preamble = "";
+		var suffix = "";
+		var argsStr = script.getAttribute("args");
+		if(argsStr){
+			d.forEach(argsStr.split(/\s*,\s*/), function(part, idx){
+				preamble += "var "+part+" = arguments["+idx+"]; ";
+			});
+		}
+		var withStr = script.getAttribute("with");
+		if(withStr && withStr.length){
+			d.forEach(withStr.split(/\s*,\s*/), function(part){
+				preamble += "with("+part+"){";
+				suffix += "}";
+			});
+		}
+		return new Function(preamble+script.innerHTML+suffix);
+	}
+
+	this.instantiate = function(/* Array */nodes, /* Object? */mixin, /* Object? */args){
+		// summary:
+		//		Takes array of nodes, and turns them into class instances and
+		//		potentially calls a layout method to allow them to connect with
+		//		any children		
+		// mixin: Object?
+		//		An object that will be mixed in with each node in the array.
+		//		Values in the mixin will override values in the node, if they
+		//		exist.
+		// args: Object?
+		//		An object used to hold kwArgs for instantiation.
+		//		Only supports 'noStart' currently.
+		var thelist = [], dp = dojo.parser;
+		mixin = mixin||{};
+		args = args||{};
+		
+		d.forEach(nodes, function(node){
+			if(!node){ return; }
+			var type = dp._attrName in mixin?mixin[dp._attrName]:node.getAttribute(dp._attrName);
+			if(!type || !type.length){ return; }
+			var clsInfo = getClassInfo(type),
+				clazz = clsInfo.cls,
+				ps = clazz._noScript || clazz.prototype._noScript;
+
+			// read parameters (ie, attributes).
+			// clsInfo.params lists expected params like {"checked": "boolean", "n": "number"}
+			var params = {},
+				attributes = node.attributes;
+			for(var name in clsInfo.params){
+				var item = name in mixin?{value:mixin[name],specified:true}:attributes.getNamedItem(name);
+				if(!item || (!item.specified && (!dojo.isIE || name.toLowerCase()!="value"))){ continue; }
+				var value = item.value;
+				// Deal with IE quirks for 'class' and 'style'
+				switch(name){
+				case "class":
+					value = "className" in mixin?mixin.className:node.className;
+					break;
+				case "style":
+					value = "style" in mixin?mixin.style:(node.style && node.style.cssText); // FIXME: Opera?
+				}
+				var _type = clsInfo.params[name];
+				if(typeof value == "string"){
+					params[name] = str2obj(value, _type);
+				}else{
+					params[name] = value;
+				}
+			}
+
+			// Process <script type="dojo/*"> script tags
+			// <script type="dojo/method" event="foo"> tags are added to params, and passed to
+			// the widget on instantiation.
+			// <script type="dojo/method"> tags (with no event) are executed after instantiation
+			// <script type="dojo/connect" event="foo"> tags are dojo.connected after instantiation
+			// note: dojo/* script tags cannot exist in self closing widgets, like <input />
+			if(!ps){
+				var connects = [],	// functions to connect after instantiation
+					calls = [];		// functions to call after instantiation
+
+				d.query("> script[type^='dojo/']", node).orphan().forEach(function(script){
+					var event = script.getAttribute("event"),
+						type = script.getAttribute("type"),
+						nf = d.parser._functionFromScript(script);
+					if(event){
+						if(type == "dojo/connect"){
+							connects.push({event: event, func: nf});
+						}else{
+							params[event] = nf;
+						}
+					}else{
+						calls.push(nf);
+					}
+				});
+			}
+
+			var markupFactory = clazz.markupFactory || clazz.prototype && clazz.prototype.markupFactory;
+			// create the instance
+			var instance = markupFactory ? markupFactory(params, node, clazz) : new clazz(params, node);
+			thelist.push(instance);
+
+			// map it to the JS namespace if that makes sense
+			var jsname = node.getAttribute("jsId");
+			if(jsname){
+				d.setObject(jsname, instance);
+			}
+
+			// process connections and startup functions
+			if(!ps){
+				d.forEach(connects, function(connect){
+					d.connect(instance, connect.event, null, connect.func);
+				});
+				d.forEach(calls, function(func){
+					func.call(instance);
+				});
+			}
+		});
+
+		// Call startup on each top level instance if it makes sense (as for
+		// widgets).  Parent widgets will recursively call startup on their
+		// (non-top level) children
+		if(!mixin._started){
+			d.forEach(thelist, function(instance){
+				if(	!args.noStart && instance  && 
+					instance.startup &&
+					!instance._started && 
+					(!instance.getParent || !instance.getParent())
+				){
+					instance.startup();
+				}
+			});
+		}
+		return thelist;
+	};
+
+	this.parse = function(/*DomNode?*/ rootNode, /* Object? */ args){
+		// summary:
+		//		Scan the DOM for class instances, and instantiate them.
+		//
+		// description:
+		//		Search specified node (or root node) recursively for class instances,
+		//		and instantiate them Searches for
+		//		dojoType="qualified.class.name"
+		//
+		// rootNode: DomNode?
+		//		A default starting root node from which to start the parsing. Can be
+		//		omitted, defaulting to the entire document. If omitted, the `args`
+		//		object can be passed in this place. If the `args` object has a 
+		//		`rootNode` member, that is used.
+		//
+		// args:
+		//		a kwArgs object passed along to instantiate()
+		//		
+		//			* noStart: Boolean?
+		//				when set will prevent the parser from calling .startup()
+		//				when locating the nodes. 
+		//			* rootNode: DomNode?
+		//				identical to the function's `rootNode` argument, though
+		//				allowed to be passed in via this `args object. 
+		//
+		// example:
+		//		Parse all widgets on a page:
+		//	|		dojo.parser.parse();
+		//
+		// example:
+		//		Parse all classes within the node with id="foo"
+		//	|		dojo.parser.parse(dojo.byId(foo));
+		//
+		// example:
+		//		Parse all classes in a page, but do not call .startup() on any 
+		//		child
+		//	|		dojo.parser.parse({ noStart: true })
+		//
+		// example:
+		//		Parse all classes in a node, but do not call .startup()
+		//	|		dojo.parser.parse(someNode, { noStart:true });
+		//	|		// or
+		// 	|		dojo.parser.parse({ noStart:true, rootNode: someNode });
+
+		// determine the root node based on the passed arguments.
+		var root;
+		if(!args && rootNode && rootNode.rootNode){
+			args = rootNode;
+			root = args.rootNode;
+		}else{
+			root = rootNode;
+		}
+
+		var	list = d.query(this._query, root);
+			// go build the object instances
+		return this.instantiate(list, null, args); // Array
+
+	};
 }();
+
+//Register the parser callback. It should be the first callback
+//after the a11y test.
+
 (function(){
-var _32=function(){
-if(dojo.config.parseOnLoad){
-dojo.parser.parse();
-}
-};
-if(dojo.exists("dijit.wai.onload")&&(dijit.wai.onload===dojo._loaders[0])){
-dojo._loaders.splice(1,0,_32);
-}else{
-dojo._loaders.unshift(_32);
-}
+	var parseRunner = function(){ 
+		if(dojo.config.parseOnLoad){
+			dojo.parser.parse(); 
+		}
+	};
+
+	// FIXME: need to clobber cross-dependency!!
+	if(dojo.exists("dijit.wai.onload") && (dijit.wai.onload === dojo._loaders[0])){
+		dojo._loaders.splice(1, 0, parseRunner);
+	}else{
+		dojo._loaders.unshift(parseRunner);
+	}
 })();
-}

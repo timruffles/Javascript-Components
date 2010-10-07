@@ -1,1 +1,13 @@
-({"HKD_displayName":"דולר הונג קונגי","CHF_displayName":"פרנק שוויצרי","CAD_displayName":"דולר קנדי","CNY_displayName":"יואן רנמינבי סיני","AUD_displayName":"דולר אוסטרלי","JPY_displayName":"ין יפני","USD_displayName":"דולר אמריקאי","GBP_displayName":"לירה שטרלינג","EUR_displayName":"אירו","CHF_symbol":"Fr.","JPY_symbol":"JP¥","HKD_symbol":"HK$","USD_symbol":"US$","CAD_symbol":"CA$","EUR_symbol":"€","CNY_symbol":"CN¥","GBP_symbol":"£","AUD_symbol":"AU$"})
+// generated from ldml/main/*.xml, xpath: ldml/numbers/currencies
+({
+	AUD_displayName:"דולר אוסטרלי",
+	CAD_displayName:"דולר קנדי",
+	CHF_displayName:"פרנק שוויצרי",
+	CNY_displayName:"יואן רנמינבי סיני",
+	EUR_displayName:"אירו",
+	GBP_displayName:"לירה שטרלינג",
+	HKD_displayName:"דולר הונג קונגי",
+	JPY_displayName:"ין יפני",
+	USD_displayName:"דולר אמריקאי"
+})
+                 

@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>File Editor Browser Tests</title>
+        <script type="text/javascript" src="../../../../dojo/dojo.js"
+        djConfig="isDebug: true, parseOnLoad: true"></script>
+        <script type="text/javascript">
+            dojo.provide("strly.layout.tests.ItemEditor");
+            dojo.require("dojo.parser");
+            dojo.require("doh.runner");
+            dojo.require('dojo.data.ItemFileWriteStore');
+            dojo.require("strly.layout.ItemEditor");
+            dojo.require("strly.Ludofy");
+
+            dojo.addOnLoad(function(){
+
+                var result = new doh.Deferred();
+
+                            var testItem = false;
+                            testStore.fetch({
+                                onItem:function(item){
+                                    console.log('got item');
+                                    testItem = item;
+                                    //var editor = {type:'twoon',change:function(){}};
+                                    var x = new strly.layout.ItemEditor({
+                                        item:testItem,
+                                        binding:binding,
+                                        store:testStore,
+                                        editor:dojo.byId('editor')
+                                    },'sut');
+                                    //console.log(['value is',testStore.getValue(item,'type')]);
+                                    setTimeout(function(){if(testStore.getValue(item,'type') == 'changed') result.callback(true)},50);
+                                }
+                            });
+
+                 result.addCallback(function(){
+                    alert('success!');
+                 });
+
+                doh.register("strly.layout.tests.ItemEditor", [
+                    {
+                        name:'testEdit',
+                        timeout:2000,
+                        runTest: function testItemEditorDeclarative(){
+                            var result = new doh.Deferred();
+
+                            var testItem = false;
+                            testStore.fetchItemByIdentity({
+                                identity:'Africa',
+                                onItem:function(item){
+                                    console.log('got item');
+                                    testItem = item;
+                                    //var editor = {type:'twoon',change:function(){}};
+                                    var x = new strly.layout.ItemEditor({
+                                        item:testItem,
+                                        binding:binding,
+                                        editor:editor,
+                                        store:testStore
+                                    },'sut');
+                                    dojo.attr(editor,'value','changed');
+                                    //console.log(['value is',testStore.getValue(item,'type')]);
+                                    setTimeout(function(){if(testStore.getValue(item,'type') == 'changed') result.callback(true)},50);
+                                }
+                            });
+                            return false;
+                        }
+
+                    }
+
+                ]);
+                //Execute D.O.H. in this remote file.
+                //  doh.run();
+
+            });
+            var binding = {
+                type:{object:'editor',property:'value'}
+            };
+            var testStore = strly.Ludofy.getDb('/strly');
+
+        </script>
+    </head>
+    <body>
+        <div id="sut">
+            <input type="text" id="editor" />
+        </div>
+
+    </body>
+</html>

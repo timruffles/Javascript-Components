@@ -1,1 +1,13 @@
-({"set":"Ustaw","text":"Opis:","insertImageTitle":"Właściwości obrazu","url":"Adres URL:","createLinkTitle":"Właściwości odsyłacza","newWindow":"New Window","topWindow":"Topmost Window","target":"Target:","parentWindow":"Parent Window","currentWindow":"Current Window"})
+({
+	createLinkTitle: "Właściwości odsyłacza",
+	insertImageTitle: "Właściwości obrazu",
+	url: "Adres URL:",
+	text: "Opis:",
+	target: "Cel:",
+	set: "Ustaw",
+	currentWindow: "Bieżące okno",
+	parentWindow: "Okno macierzyste",
+	topWindow: "Okno najwyższego poziomu",
+	newWindow: "Nowe okno"
+})
+

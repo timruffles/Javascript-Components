@@ -1,1 +1,31 @@
-({"buttonSet":"Imposta","insertTableTitle":"Inserisci tabella","insertTableRowAfterLabel":"Aggiungi riga dopo","center":"centro","deleteTableColumnLabel":"Elimina colonna","right":"destra","insertTableColumnBeforeLabel":"Aggiungi colonna prima","tableWidth":"Larghezza tabelle:","buttonInsert":"Inserisci","default":"predefinito","align":"Allinea:","insertTableRowBeforeLabel":"Aggiungi riga prima","cellSpacing":"Spaziatura celle:","pixels":"pixel","selectTableLabel":"Seleziona tabella","rows":"Righe:","modifyTableTitle":"Modifica tabella","cellPadding":"Padding celle:","deleteTableRowLabel":"Elimina riga","backgroundColor":"Colore di sfondo:","insertTableColumnAfterLabel":"Aggiungi colonna dopo","left":"sinistra","borderThickness":"Spessore bordi","columns":"Colonne:","percent":"percentuale","borderColor":"Colore bordi:"})
+({
+	insertTableTitle: "Inserisci tabella",
+	modifyTableTitle: "Modifica tabella",
+	rows: "Righe:",
+	columns: "Colonne:",
+	align: "Allinea:",
+	cellPadding: "Riempimento cella:",
+	cellSpacing: "Spaziatura celle:",
+	tableWidth: "Larghezza tabella:",
+	backgroundColor: "Colore sfondo:",
+	borderColor: "Colore bordo:",
+	borderThickness: "Spessore bordo",
+	pixels: "Pixel",
+	percent: "percento",
+	pixels: "pixel",
+	"default": "predefinito",
+	left: "sinistra",
+	center: "centro",
+	right: "destra",
+	buttonSet: "Imposta", // translated elsewhere?
+	buttonInsert: "Inserisci",
+
+	selectTableLabel: "Seleziona tabella",
+	insertTableRowBeforeLabel: "Inserisci riga prima",
+	insertTableRowAfterLabel: "Inserisci riga dopo",
+	insertTableColumnBeforeLabel: "Aggiungi colonna prima",
+	insertTableColumnAfterLabel: "Aggiungi colonna dopo",
+	deleteTableRowLabel: "Elimina riga",
+	deleteTableColumnLabel: "Elimina colonna"
+})
+

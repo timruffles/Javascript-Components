@@ -1,1 +1,31 @@
-({"buttonSet":"Задать","insertTableTitle":"Вставить таблицу","insertTableRowAfterLabel":"Добавить строку после","center":"по центру","deleteTableColumnLabel":"Удалить столбец","right":"справа","insertTableColumnBeforeLabel":"Добавить столбец до","tableWidth":"Ширина таблицы:","buttonInsert":"Вставить","default":"по умолчанию","align":"Выровнять:","insertTableRowBeforeLabel":"Добавить строку до","cellSpacing":"Отступ в ячейке:","pixels":"пикс.","selectTableLabel":"Выбрать таблицу","rows":"Строки:","modifyTableTitle":"Изменить таблицу","cellPadding":"Заполнение ячеек:","deleteTableRowLabel":"Удалить строку","backgroundColor":"Цвет фона:","insertTableColumnAfterLabel":"Добавить столбец после","left":"слева","borderThickness":"Ширина рамки","columns":"Столбцы:","percent":"проц.","borderColor":"Цвет рамки:"})
+({
+	insertTableTitle: "Вставить таблицу",
+	modifyTableTitle: "Изменить таблицу",
+	rows: "Строк:",
+	columns: "Столбцов:",
+	align: "Выровнять:",
+	cellPadding: "Отступ внутри ячеек:",
+	cellSpacing: "Расстояние между ячейками:",
+	tableWidth: "Ширина таблицы:",
+	backgroundColor: "Цвет фона:",
+	borderColor: "Цвет рамки:",
+	borderThickness: "Толщина рамки",
+	pixels: "Пикселов",
+	percent: "процентов",
+	pixels: "пикселов",
+	"default": "по умолчанию",
+	left: "по левому краю",
+	center: "по центру",
+	right: "по правому краю",
+	buttonSet: "Задать", // translated elsewhere?
+	buttonInsert: "Вставить",
+
+	selectTableLabel: "Выбрать таблицу",
+	insertTableRowBeforeLabel: "Добавить строку перед",
+	insertTableRowAfterLabel: "Добавить строку после",
+	insertTableColumnBeforeLabel: "Добавить столбец перед",
+	insertTableColumnAfterLabel: "Добавить столбец после",
+	deleteTableRowLabel: "Удалить строку",
+	deleteTableColumnLabel: "Удалить столбец"
+})
+

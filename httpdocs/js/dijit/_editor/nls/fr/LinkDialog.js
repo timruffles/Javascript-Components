@@ -1,1 +1,13 @@
-({"set":"Définir","text":"Description :","insertImageTitle":"Propriétés de l'image","url":"URL :","createLinkTitle":"Propriétés du lien","newWindow":"New Window","topWindow":"Topmost Window","target":"Target:","parentWindow":"Parent Window","currentWindow":"Current Window"})
+({
+	createLinkTitle: "Propriétés des liens",
+	insertImageTitle: "Propriétés des images",
+	url: "URL :",
+	text: "Description :",
+	target: "Cible :",
+	set: "Définir",
+	currentWindow: "Fenêtre en cours",
+	parentWindow: "Fenêtre parent",
+	topWindow: "Première fenêtre",
+	newWindow: "Nouvelle fenêtre"
+})
+

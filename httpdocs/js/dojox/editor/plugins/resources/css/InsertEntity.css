@@ -5,6 +5,7 @@
 	width: 18px;
 	height: 18px;
 }
+
 .dijitDisabled .dijitAdditionalEditorIconInsertEntity {
 	background-image: url(../icons/insertEntityDisabled.gif);
 	background-repeat: no-repeat;
@@ -12,11 +13,13 @@
 	width: 18px;
 	height: 18px;
 }
+
 .dojoxEntityPalette {
 	border:1px solid #999;
 	background:#fff;
 	-moz-border-radius:3pt;
 }
+
 .dojoxEntityPaletteTable {
 	position: relative;
 	overflow:hidden;
@@ -29,6 +32,7 @@
 	margin: 2px;
 	table-layout: auto;
 }
+
 .dojoxEntityPaletteCell {
 	border: 1px dotted gray;
 	width: 20px;
@@ -37,12 +41,14 @@
 	z-index: 10;
 	text-align: center;
 }
+
 .dojoxEntityPaletteNullCell {
 	border: none;
 	width: 20px;
 	height: 20px;
 	overflow: hidden;
 }
+
 .dojoxEntityPaletteCellHighlight {
 	width: 16px; 
 	height: 14px; 
@@ -51,27 +57,32 @@
 	border:2px solid #000;
 	outline:1px solid #dedede;
 }
+
 .dojoxEntityPalettePreviewTable {
 	table-layout: auto;
 	font-size: 1em;
 	width: 100%;
 }
+
 .dojoxEntityPalettePreviewHeader {
 	font-size: .8em;
 	padding: 3px 3px 3px 3px;
 }
+
 .dojoxEntityPalettePreviewDetailEntity {
 	font-size: 3em;
 	font-weight: bold;
 	width: 1em;
 	text-align: center;
 }
+
 .dojoxEntityPalettePreviewDetail {
 	font-size: 1em;
 	vertical-align: middle;
 	font-weight: bold;
 	padding: 3px 3px 3px 3px;
 }
+
 .dijit_a11y .dojoxEntityPaletteCell {
 	background-color:transparent !important;
 }

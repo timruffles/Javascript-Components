@@ -1,1 +1,5 @@
-({"add":"Lägg til ","addAuthor":"Lägg till författare","addContributor":"Lägg till medverkande"})
+({
+	add: "Lägg til ",
+	addAuthor: "Lägg till författare",
+	addContributor: "Lägg till medverkande"
+})

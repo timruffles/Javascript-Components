@@ -1,198 +1,382 @@
-/*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
-	Available via Academic Free License >= 2.1 OR the modified BSD license.
-	see: http://dojotoolkit.org/license for details
-*/
-
-
-if(!dojo._hasResource["dijit._editor.plugins.FullScreen"]){
-dojo._hasResource["dijit._editor.plugins.FullScreen"]=true;
 dojo.provide("dijit._editor.plugins.FullScreen");
+
 dojo.require("dijit._editor._Plugin");
 dojo.require("dijit.form.Button");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dijit._editor","commands",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{zIndex:500,_origState:null,_origiFrameState:null,_resizeHandle:null,isFullscreen:false,toggle:function(){
-this.button.attr("checked",!this.button.attr("checked"));
-},_initButton:function(){
-var _1=dojo.i18n.getLocalization("dijit._editor","commands");
-this.button=new dijit.form.ToggleButton({label:_1["fullScreen"],showLabel:false,iconClass:this.iconClassPrefix+" "+this.iconClassPrefix+"FullScreen",tabIndex:"-1",onChange:dojo.hitch(this,"_setFullScreen")});
-},setEditor:function(_2){
-this.editor=_2;
-this._initButton();
-this.editor.addKeyHandler(dojo.keys.F11,true,true,dojo.hitch(this,function(e){
-this.toggle();
-dojo.stopEvent(e);
-setTimeout(dojo.hitch(this,function(){
-this.editor.focus();
-}),250);
-return true;
-}));
-this.connect(this.editor.domNode,"onkeydown","_containFocus");
-},_containFocus:function(e){
-if(this.isFullscreen){
-var ed=this.editor;
-if(!ed.isTabIndent&&ed._fullscreen_oldOnKeyDown&&e.keyCode===dojo.keys.TAB){
-var f=dijit.getFocus();
-var _3=this._getAltViewNode();
-if(f.node==ed.iframe||(_3&&f.node===_3)){
-setTimeout(dojo.hitch(this,function(){
-ed.toolbar.focus();
-}),10);
-}else{
-if(_3&&dojo.style(ed.iframe,"display")==="none"){
-setTimeout(dojo.hitch(this,function(){
-dijit.focus(_3);
-}),10);
-}else{
-setTimeout(dojo.hitch(this,function(){
-ed.focus();
-}),10);
-}
-}
-dojo.stopEvent(e);
-}else{
-if(ed._fullscreen_oldOnKeyDown){
-ed._fullscreen_oldOnKeyDown(e);
-}
-}
-}
-},_resizeEditor:function(){
-var vp=dijit.getViewport();
-dojo.marginBox(this.editor.domNode,{w:vp.w,h:vp.h});
-var _4=dojo.marginBox(this.editor.toolbar.domNode);
-var _5=dojo._getPadBorderExtents(this.editor.domNode);
-var _6=vp.h-(_4.h+_5.h);
-dojo.marginBox(this.editor.iframe.parentNode,{h:_6});
-dojo.marginBox(this.editor.iframe,{h:_6});
-},_getAltViewNode:function(){
-},_setFullScreen:function(_7){
-var vp=dijit.getViewport();
-var ed=this.editor;
-var _8=dojo.body();
-var _9=ed.domNode.parentNode;
-this.isFullscreen=_7;
-if(_7){
-while(_9&&_9!==dojo.body()){
-dojo.addClass(_9,"dijitForceStatic");
-_9=_9.parentNode;
-}
-this._editorResizeHolder=this.editor.resize;
-ed.resize=function(){
-};
-ed._fullscreen_oldOnKeyDown=ed.onKeyDown;
-ed.onKeyDown=dojo.hitch(this,this._containFocus);
-this._origState={};
-this._origiFrameState={};
-var _a=ed.domNode,_b=_a&&_a.style||{};
-this._origState={width:_b.width||"",height:_b.height||"",top:dojo.style(_a,"top")||"",left:dojo.style(_a,"left")||"",position:dojo.style(_a,"position")||"static"};
-var _c=ed.iframe,_d=_c&&_c.style||{};
-var bc=dojo.style(ed.iframe,"backgroundColor");
-this._origiFrameState={backgroundColor:bc||"transparent",width:_d.width||"auto",height:_d.height||"auto",zIndex:_d.zIndex||""};
-dojo.style(ed.domNode,{position:"absolute",top:"0px",left:"0px",zIndex:this.zIndex,width:vp.w+"px",height:vp.h+"px"});
-dojo.style(ed.iframe,{height:"100%",width:"100%",zIndex:this.zIndex,backgroundColor:bc!=="transparent"&&bc!=="rgba(0, 0, 0, 0)"?bc:"white"});
-dojo.style(ed.iframe.parentNode,{height:"95%",width:"100%"});
-if(_8.style&&_8.style.overflow){
-this._oldOverflow=dojo.style(_8,"overflow");
-}else{
-this._oldOverflow="";
-}
-if(dojo.isIE&&!dojo.isQuirks){
-if(_8.parentNode&&_8.parentNode.style&&_8.parentNode.style.overflow){
-this._oldBodyParentOverflow=_8.parentNode.style.overflow;
-}else{
-this._oldBodyParentOverflow="scroll";
-}
-dojo.style(_8.parentNode,"overflow","hidden");
-}
-dojo.style(_8,"overflow","hidden");
-var _e=function(){
-var vp=dijit.getViewport();
-if("_prevW" in this&&"_prevH" in this){
-if(vp.w===this._prevW&&vp.h===this._prevH){
-return;
-}
-}else{
-this._prevW=vp.w;
-this._prevH=vp.h;
-}
-if(this._resizer){
-clearTimeout(this._resizer);
-delete this._resizer;
-}
-this._resizer=setTimeout(dojo.hitch(this,function(){
-delete this._resizer;
-this._resizeEditor();
-}),10);
-};
-this._resizeHandle=dojo.connect(window,"onresize",this,_e);
-this._resizeEditor();
-var dn=this.editor.toolbar.domNode;
-setTimeout(function(){
-dijit.scrollIntoView(dn);
-},250);
-}else{
-if(this._editorResizeHolder){
-this.editor.resize=this._editorResizeHolder;
-}
-if(!this._origState&&!this._origiFrameState){
-return;
-}
-if(ed._fullscreen_oldOnKeyDown){
-ed.onKeyDown=ed._fullscreen_oldOnKeyDown;
-delete ed._fullscreen_oldOnKeyDown;
-}
-if(this._resizeHandle){
-dojo.disconnect(this._resizeHandle);
-this._resizeHandle=null;
-}
-if(this._rst){
-clearTimeout(this._rst);
-this._rst=null;
-}
-while(_9&&_9!==dojo.body()){
-dojo.removeClass(_9,"dijitForceStatic");
-_9=_9.parentNode;
-}
-var _f=this;
-setTimeout(function(){
-if(dojo.isIE&&!dojo.isQuirks){
-_8.parentNode.style.overflow=_f._oldBodyParentOverflow;
-delete _f._oldBodyParentOverflow;
-}
-dojo.style(_8,"overflow",_f._oldOverflow);
-delete _f._oldOverflow;
-dojo.style(ed.domNode,_f._origState);
-dojo.style(ed.iframe.parentNode,{height:"",width:""});
-dojo.style(ed.iframe,_f._origiFrameState);
-delete _f._origState;
-delete _f._origiFrameState;
-ed.resize();
-var _10=dijit.getEnclosingWidget(ed.domNode.parentNode);
-if(_10&&_10.resize){
-_10.resize();
-}
-dijit.scrollIntoView(_f.editor.toolbar.domNode);
-},100);
-}
-},destroy:function(){
-if(this._resizeHandle){
-dojo.disconnect(this._resizeHandle);
-this._resizeHandle=null;
-}
-if(this._resizer){
-clearTimeout(this._resizer);
-this._resizer=null;
-}
-this.inherited(arguments);
-}});
-dojo.subscribe(dijit._scopeName+".Editor.getPlugin",null,function(o){
-if(o.plugin){
-return;
-}
-var _11=o.args.name.toLowerCase();
-if(_11==="fullscreen"){
-o.plugin=new dijit._editor.plugins.FullScreen({zIndex:("zIndex" in o.args)?o.args.zIndex:500});
-}
+
+dojo.requireLocalization("dijit._editor", "commands");
+
+dojo.declare("dijit._editor.plugins.FullScreen",dijit._editor._Plugin,{
+	// summary:
+	//		This plugin provides FullScreen cabability to the editor.  When
+	//		toggled on, it will render the editor into the full window and
+	//		overlay everything.  It also binds to the hotkey: CTRL-SHIFT-F11
+	//		for toggling fullscreen mode.
+
+	// zIndex: [public] Number
+	//		zIndex value used for overlaying the full page.
+	//		default is 500.
+	zIndex: 500,
+
+	// _origState: [private] Object
+	//		The original view state of the editor.
+	_origState: null,
+
+	// _origiFrameState: [private] Object
+	//		The original view state of the iframe of the editor.
+	_origiFrameState: null,
+
+	// _resizeHandle: [private] Object
+	//		Connection point used for handling resize when window resizes.
+	_resizeHandle: null,
+
+	// isFullscreen: [const] boolean
+	//		Read-Only variable used to denote of the editor is in fullscreen mode or not.
+	isFullscreen: false,
+
+	toggle: function(){
+		// summary:
+		//		Function to allow programmatic toggling of the view.
+		this.button.attr("checked", !this.button.attr("checked"));
+	},
+
+	_initButton: function(){
+		// summary:
+		//		Over-ride for creation of the resize button.
+		var strings = dojo.i18n.getLocalization("dijit._editor", "commands");
+		this.button = new dijit.form.ToggleButton({
+			label: strings["fullScreen"],
+			showLabel: false,
+			iconClass: this.iconClassPrefix + " " + this.iconClassPrefix + "FullScreen",
+			tabIndex: "-1",
+			onChange: dojo.hitch(this, "_setFullScreen")
+		});
+	},
+
+	setEditor: function(editor){
+		// summary:
+		//		Over-ride for the setting of the editor.
+		// editor: Object
+		//		The editor to configure for this plugin to use.
+		this.editor = editor;
+		this._initButton();
+
+		this.editor.addKeyHandler(dojo.keys.F11, true, true, dojo.hitch(this, function(e){
+			// Enable the CTRL-SHIFT-F11 hotkey for fullscreen mode.
+			this.toggle();
+			dojo.stopEvent(e);
+			setTimeout(dojo.hitch(this, function(){this.editor.focus();}), 250);
+			return true;
+		}));
+		this.connect(this.editor.domNode, "onkeydown", "_containFocus");
+	},
+
+	_containFocus: function(e){
+		// summary:
+		//		When in Full Screen mode, it's good to try and retain focus in the editor
+		//		so this function is intended to try and constrain the TAB key.
+		// e: Event
+		//		The key event.
+		// tags:
+		//		private
+		if(this.isFullscreen){
+			var ed = this.editor;
+			if(!ed.isTabIndent &&
+				ed._fullscreen_oldOnKeyDown &&
+				e.keyCode === dojo.keys.TAB){
+				// If we're in fullscreen mode, we want to take over how tab moves focus a bit.
+				// to keep it within the editor since it's hiding the rest of the page.
+				// IE hates changing focus IN the event handler, so need to put calls
+				// in a timeout.  Gotta love IE.
+				// Also need to check for alternate view nodes if present and active.
+				var f = dijit.getFocus();
+				var avn = this._getAltViewNode();
+				if(f.node == ed.iframe ||
+					(avn && f.node === avn)){
+					setTimeout(dojo.hitch(this, function(){
+						ed.toolbar.focus();
+					}), 10);
+				}else{
+					if(avn && dojo.style(ed.iframe, "display") === "none"){
+						setTimeout(dojo.hitch(this, function(){
+							dijit.focus(avn);
+						}), 10);
+					}else{
+						setTimeout(dojo.hitch(this, function(){
+							ed.focus();
+						}), 10);
+					}
+				}
+				dojo.stopEvent(e);
+			}else if(ed._fullscreen_oldOnKeyDown){
+				// Only call up when it's a different function.  Traps corner case event issue
+				// on IE which caused stack overflow on handler cleanup.
+				ed._fullscreen_oldOnKeyDown(e);
+			}
+		}
+	},
+
+	_resizeEditor: function(){
+		// summary:
+		//		Function to handle resizing the editor as the viewport
+		//		resizes (window scaled)
+		// tags:
+		//		private
+		var vp = dijit.getViewport();
+		dojo.marginBox(this.editor.domNode, {
+			w: vp.w,
+			h: vp.h
+		});
+
+		//Adjust the inernal heights too, as they can be a bit off.
+		var tBox = dojo.marginBox(this.editor.toolbar.domNode);
+		var extents = dojo._getPadBorderExtents(this.editor.domNode);
+
+		//AQdjust it.
+		var cHeight = vp.h - (tBox.h + extents.h);
+		dojo.marginBox(this.editor.iframe.parentNode, {
+			h: cHeight
+		});
+		dojo.marginBox(this.editor.iframe, {
+			h: cHeight
+		});
+	},
+
+	_getAltViewNode: function(){
+		// summary:
+		//		This function is intended as a hook point for setting an
+		//		alternate view node for when in full screen mode and the
+		//		editable iframe is hidden.
+		// tags:
+		//		protected.
+	},
+
+	_setFullScreen: function(full){
+		// summary:
+		//		Function to handle toggling between full screen and
+		//		regular view.
+		// tags:
+		//		private
+		var vp = dijit.getViewport();
+
+		//Alias this for shorter code.
+		var ed = this.editor;
+		var body = dojo.body();
+		var editorParent = ed.domNode.parentNode;
+
+		this.isFullscreen = full;
+
+		if(full){
+			//Parent classes can royally screw up this plugin, so we 
+			//have to set eveything to position static.
+			while(editorParent && editorParent !== dojo.body()){
+				dojo.addClass(editorParent, "dijitForceStatic");
+				editorParent = editorParent.parentNode;
+			}
+
+			// Save off the resize function.  We want to kill its behavior.
+			this._editorResizeHolder = this.editor.resize;
+			ed.resize = function() {} ;
+
+			// Try to constrain focus control.
+			ed._fullscreen_oldOnKeyDown = ed.onKeyDown;
+			ed.onKeyDown = dojo.hitch(this, this._containFocus);
+
+			this._origState = {};
+			this._origiFrameState = {};
+
+			// Store the basic editor state we have to restore later.
+			// Not using dojo.style here, had problems, didn't
+			// give me stuff like 100%, gave me pixel calculated values.
+			// Need the exact original values.
+			var domNode = ed.domNode,
+				domStyle = domNode && domNode.style || {};
+			this._origState = {
+				width: domStyle.width || "",
+				height: domStyle.height || "",
+				top: dojo.style(domNode, "top") || "",
+				left: dojo.style(domNode, "left") || "",
+				position: dojo.style(domNode, "position") || "static"
+			};
+
+			// Store the iframe state we have to restore later.
+			// Not using dojo.style here, had problems, didn't
+			// give me stuff like 100%, gave me pixel calculated values.
+			// Need the exact original values.
+			var iframe = ed.iframe,
+				iframeStyle = iframe && iframe.style || {};
+
+			var bc = dojo.style(ed.iframe, "backgroundColor");
+			this._origiFrameState = {
+				backgroundColor: bc || "transparent",
+				width: iframeStyle.width || "auto",
+				height: iframeStyle.height || "auto",
+				zIndex: iframeStyle.zIndex || ""
+			};
+
+			// Okay, size everything.
+			dojo.style(ed.domNode, {
+				position: "absolute",
+				top: "0px",
+				left: "0px",
+				zIndex: this.zIndex,
+				width: vp.w + "px",
+				height: vp.h + "px"
+			});
+
+			dojo.style(ed.iframe, {
+				height: "100%",
+				width: "100%",
+				zIndex: this.zIndex,
+				backgroundColor: bc !== "transparent" &&
+					bc !== "rgba(0, 0, 0, 0)"?bc:"white"
+			});
+
+			dojo.style(ed.iframe.parentNode, {
+				height: "95%",
+				width: "100%"
+			});
+
+			// Store the overflow state we have to restore later.
+			// IE had issues, so have to check that it's defined.  Ugh.
+			if(body.style && body.style.overflow){
+				this._oldOverflow = dojo.style(body, "overflow");
+			}else{
+				this._oldOverflow = "";
+			}
+
+			if(dojo.isIE && !dojo.isQuirks){
+				// IE will put scrollbars in anyway, html (parent of body)
+				// also controls them in standards mode, so we have to
+				// remove them, argh.
+				if(body.parentNode &&
+					body.parentNode.style &&
+					body.parentNode.style.overflow){
+					this._oldBodyParentOverflow = body.parentNode.style.overflow;
+				}else{
+					this._oldBodyParentOverflow = "scroll";
+				}
+				dojo.style(body.parentNode, "overflow", "hidden");
+			}
+			dojo.style(body, "overflow", "hidden");
+
+			var resizer = function(){
+				// function to handle resize events.
+				// Will check current VP and only resize if
+				// different.
+				var vp = dijit.getViewport();
+				if("_prevW" in this && "_prevH" in this){
+					// No actual size change, ignore.
+					if(vp.w === this._prevW && vp.h === this._prevH){
+						return;
+					}
+				}else{
+					this._prevW = vp.w;
+					this._prevH = vp.h;
+				}
+				if(this._resizer){
+					clearTimeout(this._resizer);
+					delete this._resizer;
+				}
+				// Timeout it to help avoid spamming resize on IE.
+				// Works for all browsers.
+				this._resizer = setTimeout(dojo.hitch(this, function(){
+					delete this._resizer;
+					this._resizeEditor();
+				}), 10);
+			};
+			this._resizeHandle = dojo.connect(window, "onresize", this, resizer);
+
+			// Call it once to work around IE glitchiness.  Safe for other browsers too.
+			this._resizeEditor();
+			var dn = this.editor.toolbar.domNode;
+			setTimeout(function(){dijit.scrollIntoView(dn);}, 250);
+		}else{
+			// Restore resize function
+			if(this._editorResizeHolder){
+				this.editor.resize = this._editorResizeHolder;
+			}
+
+			if(!this._origState && !this._origiFrameState){
+				// If we actually didn't toggle, then don't do anything.
+				return;
+			}
+			if(ed._fullscreen_oldOnKeyDown){
+				ed.onKeyDown = ed._fullscreen_oldOnKeyDown;
+				delete ed._fullscreen_oldOnKeyDown;
+			}
+			if(this._resizeHandle){
+				// Cleanup resizing listeners
+				dojo.disconnect(this._resizeHandle);
+				this._resizeHandle = null;
+			}
+			if(this._rst){
+				clearTimeout(this._rst);
+				this._rst = null;
+			}
+
+			//Remove all position static class assigns.
+			while(editorParent && editorParent !== dojo.body()){
+				dojo.removeClass(editorParent, "dijitForceStatic");
+				editorParent = editorParent.parentNode;
+			}
+
+			// Add a timeout to make sure we don't have a resize firing in the
+			// background at the time of minimize.
+			var self = this;
+			setTimeout(function(){
+				// Restore all the editor state.
+				if(dojo.isIE && !dojo.isQuirks){
+					body.parentNode.style.overflow = self._oldBodyParentOverflow;
+					delete self._oldBodyParentOverflow;
+				}
+				dojo.style(body, "overflow", self._oldOverflow);
+				delete self._oldOverflow;
+
+				dojo.style(ed.domNode, self._origState);
+				dojo.style(ed.iframe.parentNode, {
+					height: "",
+					width: ""
+				});
+				dojo.style(ed.iframe, self._origiFrameState);
+				delete self._origState;
+				delete self._origiFrameState;
+				// In case it is contained in a layout and the layout changed size,
+				// go ahead and call resize.
+				ed.resize();
+				var pWidget = dijit.getEnclosingWidget(ed.domNode.parentNode);
+				if(pWidget && pWidget.resize){
+				    pWidget.resize();
+				}
+				dijit.scrollIntoView(self.editor.toolbar.domNode);
+			}, 100);
+		}
+	},
+
+	destroy: function(){
+		// summary:
+		//		Over-ride to ensure the resize handle gets cleaned up.
+		if(this._resizeHandle){
+			// Cleanup resizing listeners
+			dojo.disconnect(this._resizeHandle);
+			this._resizeHandle = null;
+		}
+		if(this._resizer){
+			clearTimeout(this._resizer);
+			this._resizer = null;
+		}
+		this.inherited(arguments);
+	}
 });
-}
+
+
+// Register this plugin.
+dojo.subscribe(dijit._scopeName + ".Editor.getPlugin",null,function(o){
+	if(o.plugin){ return; }
+	var name = o.args.name.toLowerCase();
+	if(name === "fullscreen"){
+		o.plugin = new dijit._editor.plugins.FullScreen({
+			zIndex: ("zIndex" in o.args)?o.args.zIndex:500
+		});
+	}
+});

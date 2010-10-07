@@ -1,1 +1,4 @@
-({"insertEntity":"기호 넣기"})
+({
+	insertEntity: "기호 삽입"
+})
+

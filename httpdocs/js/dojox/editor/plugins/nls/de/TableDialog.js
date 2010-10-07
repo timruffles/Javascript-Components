@@ -1,1 +1,31 @@
-({"buttonSet":"Festlegen","insertTableTitle":"Tabelle einfügen","insertTableRowAfterLabel":"Zeile danach einfügen","center":"Mitte","deleteTableColumnLabel":"Spalte löschen","right":"Rechts","insertTableColumnBeforeLabel":"Spalte davor einfügen","tableWidth":"Tabellenbreite:","buttonInsert":"Einfügen","default":"Standard","align":"Ausrichten:","insertTableRowBeforeLabel":"Zeile davor einfügen","cellSpacing":"Zellenabstand:","pixels":"Pixel","selectTableLabel":"Tabelle auswählen","rows":"Zeilen:","modifyTableTitle":"Tabelle ändern","cellPadding":"Zellenrandbreite:","deleteTableRowLabel":"Zeile löschen","backgroundColor":"Hintergrundfarbe:","insertTableColumnAfterLabel":"Spalte danach einfügen","left":"Links","borderThickness":"Ränderdicke","columns":"Spalten:","percent":"Prozent","borderColor":"Umrandungsfarbe:"})
+({
+	insertTableTitle: "Tabelle einfügen",
+	modifyTableTitle: "Tabelle ändern",
+	rows: "Zeilen:",
+	columns: "Spalten:",
+	align: "Ausrichten:",
+	cellPadding: "Zellenrandbreite:",
+	cellSpacing: "Zellenabstand:",
+	tableWidth: "Tabellenbreite:",
+	backgroundColor: "Hintergrundfarbe:",
+	borderColor: "Randfarbe:",
+	borderThickness: "Randbreite",
+	pixels: "Pixel",
+	percent: "Prozent",
+	pixels: "Pixel",
+	"default": "Standard",
+	left: "Links",
+	center: "Mitte",
+	right: "Rechts",
+	buttonSet: "Festlegen", // translated elsewhere?
+	buttonInsert: "Einfügen",
+
+	selectTableLabel: "Tabelle auswählen",
+	insertTableRowBeforeLabel: "Zeile oberhalb einfügen",
+	insertTableRowAfterLabel: "Zeile unterhalb einfügen",
+	insertTableColumnBeforeLabel: "Spalte oberhalb einfügen",
+	insertTableColumnAfterLabel: "Spalte unterhalb einfügen",
+	deleteTableRowLabel: "Zeile löschen",
+	deleteTableColumnLabel: "Spalte löschen"
+})
+

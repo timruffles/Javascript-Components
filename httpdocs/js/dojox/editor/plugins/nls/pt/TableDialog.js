@@ -1,1 +1,31 @@
-({"buttonSet":"Definir","insertTableTitle":"Inserir Tabela","insertTableRowAfterLabel":"Adicionar Linha Depois","center":"centralizado","deleteTableColumnLabel":"Excluir Coluna","right":"direita","insertTableColumnBeforeLabel":"Adicionar Coluna Antes","tableWidth":"Largura da Tabela:","buttonInsert":"Inserir","default":"padrão","align":"Alinhar:","insertTableRowBeforeLabel":"Adicionar Linha Antes","cellSpacing":"Espaçamento de Célula:","pixels":"pixels","selectTableLabel":"Selecionar Tabela","rows":"Linhas:","modifyTableTitle":"Modificar Tabela","cellPadding":"Preenchimento de Célula:","deleteTableRowLabel":"Excluir Linha","backgroundColor":"Cor do Segundo Plano:","insertTableColumnAfterLabel":"Adicionar Coluna Depois","left":"esquerda","borderThickness":"Grossura da Borda","columns":"Colunas:","percent":"percentual","borderColor":"Cor da Borda:"})
+({
+	insertTableTitle: "Inserir Tabela",
+	modifyTableTitle: "Modificar Tabela",
+	rows: "Linhas:",
+	columns: "Colunas:",
+	align: "Alinhar:",
+	cellPadding: "Preenchimento de Célula:",
+	cellSpacing: "Espaçamento de Célula:",
+	tableWidth: "Largura da Tabela:",
+	backgroundColor: "Cor do Plano de Fundo:",
+	borderColor: "Cor da Borda:",
+	borderThickness: "Grossura da Borda",
+	pixels: "Pixels",
+	percent: "percentual",
+	pixels: "pixels",
+	"default": "default",
+	left: "esquerda",
+	center: "centro",
+	right: "direita",
+	buttonSet: "Configurar", // translated elsewhere?
+	buttonInsert: "Inserir",
+
+	selectTableLabel: "Selecionar Tabela",
+	insertTableRowBeforeLabel: "Incluir Linha Antes",
+	insertTableRowAfterLabel: "Incluir Linha Depois",
+	insertTableColumnBeforeLabel: "Incluir Coluna Antes",
+	insertTableColumnAfterLabel: "Incluir Coluna Depois",
+	deleteTableRowLabel: "Excluir Linha",
+	deleteTableColumnLabel: "Excluir Coluna"
+})
+
